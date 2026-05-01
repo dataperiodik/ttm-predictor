@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>TTM 5D Predictor</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background:#111; color:#eee; }
+    input, button { padding:10px; font-size:16px; }
+    .box { margin-top:20px; padding:15px; background:#222; border-radius:10px; }
+    h2 { color:#00ffcc; }
+  </style>
+</head>
+<body>
+
+<h1>🔥 TTM 5D Auto Predictor</h1>
+
+<input type="text" id="result" placeholder="Masukkan result (contoh: 83856)" maxlength="5">
+<button onclick="hitung()">PROSES</button>
+
+<div class="box" id="output"></div>
+
+<script>
+function mod10(n){ return ((n % 10) + 10) % 10; }
+
+function hitung(){
+  let r = document.getElementById("result").value;
+  if(r.length !== 5) return alert("Harus 5 digit!");
+
+  let A = parseInt(r[0]);
+  let B = parseInt(r[1]);
+  let C = parseInt(r[2]);
+  let D = parseInt(r[3]);
+
+  // SBT dasar
+  let as_kop = mod10(A + B);
+  let kop_kep = Math.abs(B - C);
+  let kep_eko = mod10(C + D);
+
+  // Tarik jabrig
+  let t1 = Math.abs(A - B);
+  let t2 = Math.abs(C - D);
+
+  let tarik1 = t1;
+  let tarik2 = t2;
+
+  // Angka inti
+  let inti = [as_kop, kop_kep, kep_eko, tarik1, tarik2];
+
+  // ambil unik
+  let unik = [...new Set(inti)];
+
+  // fokus angka (filter sederhana)
+  let fokus = unik.filter(x => x !== 0 && x !== 1 && x !== 9);
+
+  // buat kombinasi
+  let d2 = [];
+  let d3 = [];
+  let d4 = [];
+
+  // 2D
+  for(let i=0;i<fokus.length;i++){
+    for(let j=0;j<fokus.length;j++){
+      if(i!==j){
+        d2.push("" + fokus[i] + fokus[j]);
+      }
+    }
+  }
+
+  // 3D
+  for(let a of fokus){
+    for(let b of fokus){
+      for(let c of fokus){
+        if(a!==b && b!==c){
+          d3.push("" + a+b+c);
+        }
+      }
+    }
+  }
+
+  // 4D (ambil top kombinasi)
+  for(let a of fokus){
+    for(let b of fokus){
+      for(let c of fokus){
+        for(let d of fokus){
+          if(new Set([a,b,c,d]).size >= 3){
+            d4.push("" + a+b+c+d);
+          }
+        }
+      }
+    }
+  }
+
+  document.getElementById("output").innerHTML = `
+    <h2>🔢 Angka Inti</h2>
+    ${fokus.join(", ")}
+
+    <h2>🎯 2D</h2>
+    ${d2.slice(0,10).join(", ")}
+
+    <h2>🔥 3D</h2>
+    ${d3.slice(0,10).join(", ")}
+
+    <h2>🚀 4D</h2>
+    ${d4.slice(0,10).join(", ")}
+  `;
+}
+</script>
+
+</body>
+</html>
